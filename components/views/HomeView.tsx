@@ -1,29 +1,17 @@
 "use client";
 
-import { Restricted } from "@/components/layout/Restricted";
-import { useDashboard } from "@/components/providers/DashboardProvider";
-
 import { TmsModule } from "./TmsModule";
 
 /**
- * The landing page adapts to who is signed in.
+ * The landing page.
  *
- * This deployment carries one division, so the routing is shorter than the
- * dashboard's: TmsModule picks the persona page from the business line — the
- * agent's desk, a landlord's properties, a tenant's own tenancy.
- *
- * The super admin lands on the same module rather than on a summary of
- * everything, because here there is nothing else to summarise.
- *
- * Anyone else is shown the restricted notice rather than an empty dashboard.
- * In the group dashboard a non-TMS role has their own division to land on; in
- * this one they have none, and row level security would answer every query
- * with nothing — which reads as a broken page rather than as "not for you".
+ * There is no routing left to do here. This deployment publishes two personas
+ * and TmsModule picks between them from the business line, so the landing page
+ * is the module and nothing else. The role check that used to stand here —
+ * super admin or `tms`, everyone else restricted — moved into TmsModule, which
+ * is where the same decision has to be made for a direct link to /tms anyway.
+ * One decision in one place beats two that can disagree.
  */
 export function HomeView() {
-  const { profile, isSuperAdmin } = useDashboard();
-
-  if (isSuperAdmin || profile.role === "tms") return <TmsModule />;
-
-  return <Restricted />;
+  return <TmsModule />;
 }

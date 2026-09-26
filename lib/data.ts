@@ -3,7 +3,6 @@ import "server-only";
 import { createClient } from "./supabase/server";
 import type {
   DocumentRef,
-  InvoiceIssuer,
   TmsAccessCard,
   TmsCarpark,
   TmsExpense,
@@ -624,58 +623,6 @@ function mapMeterReading(
 /* -------------------------------------------------------------------------- */
 /* Signed-in user                                                              */
 /* -------------------------------------------------------------------------- */
-
-/**
- * Every account, for the user management page.
- *
- * Returns only what the caller may see: the profiles SELECT policy gives a
- * super admin every row and everyone else just their own, so a CIO calling
- * this gets a one-row list rather than an error.
- */
-/**
- * The companies that can issue an invoice.
- *
- * Read with the signed-in user's client, so RLS decides: the table is super
- * admin only, and anyone else gets an empty list rather than an error.
- */
-export async function getInvoiceIssuers(): Promise<InvoiceIssuer[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("invoice_issuers")
-    .select("*")
-    .order("created_at");
-
-  return (data ?? []).map((row) => ({
-    id: row.id,
-    label: row.label,
-    name: row.name,
-    regNo: row.reg_no ?? "",
-    building: row.building ?? "",
-    addressLines: row.address_lines ?? [],
-    contact: row.contact ?? "",
-    prefix: row.prefix ?? "",
-    logo: row.logo ?? "",
-    bankName: row.bank_name ?? "",
-    bankAccount: row.bank_account ?? "",
-  }));
-}
-
-export async function getAllProfiles(): Promise<UserProfile[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .order("created_at");
-
-  return (data ?? []).map((row) => ({
-    id: row.id,
-    fullName: row.full_name,
-    email: row.email,
-    role: row.role,
-    businessLine: row.business_line ?? null,
-    canIssueInvoices: row.can_issue_invoices ?? false,
-  }));
-}
 
 export async function getCurrentProfile(): Promise<UserProfile | null> {
   const supabase = await createClient();

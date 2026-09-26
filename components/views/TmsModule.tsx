@@ -1,27 +1,26 @@
 "use client";
 
-import type { ReactNode } from "react";
-
+import { StaffElsewhere } from "@/components/layout/StaffElsewhere";
 import { useDashboard } from "@/components/providers/DashboardProvider";
 
-import { TmsAgentView } from "./TmsAgentView";
 import { TmsLandlordView } from "./TmsLandlordView";
 import { TmsTenantView } from "./TmsTenantView";
 
 /**
- * Picks the TMS page for whoever is signed in, the way MicanaModule picks one
- * from the line.
+ * Picks the page for whoever is signed in.
  *
- * A tenant and a landlord each get their own page wherever they land,
- * including on a direct link to /tms/expenses. Hiding those links in the
- * sidebar is a convenience; this is what makes following one anyway lead
- * somewhere sensible rather than to a management screen holding a single row.
+ * Two audiences are published at this address and no others: the tenant who
+ * lives in a room, and the landlord who owns units. Each gets their own page
+ * wherever they land, including on a direct link, which is what makes
+ * following an old bookmark lead somewhere sensible.
  *
- * `children` — the four agent screens — is only ever reached by an agent or
- * the super admin. Everyone else is diverted above it, so a persona page can
- * never be one navigation away from the screen it replaced.
+ * Everyone else — an agent, the super admin, a member of another division —
+ * gets the notice. There is no `children` to fall through to any more: the
+ * agent screens are not part of this deployment, so there is nothing here for
+ * a management persona to be shown. That is the whole point of the split. The
+ * screens are on the internal dashboard, against this same database.
  */
-export function TmsModule({ children }: { children?: ReactNode }) {
+export function TmsModule() {
   const { profile } = useDashboard();
 
   if (profile.role === "tms") {
@@ -29,5 +28,5 @@ export function TmsModule({ children }: { children?: ReactNode }) {
     if (profile.businessLine === "tms_landlord") return <TmsLandlordView />;
   }
 
-  return <>{children ?? <TmsAgentView />}</>;
+  return <StaffElsewhere />;
 }

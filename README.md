@@ -1,14 +1,31 @@
 # Micasa Asia — Tenant Management
 
-Rooms, tenancies, rent and prepaid meters for Micasa Asia. One division, three
-people who use it: the agent who runs the portfolio, the landlord who owns
-units in it, and the tenant who lives in a room.
+The tenant-facing address for Micasa Asia. A tenant sees what they owe and
+pays it; a landlord sees their own units. That is the whole of it.
 
 ## Its relationship to mcn-asset-hq
 
 This is the TMS module of `mcnasset-vk/mcn-asset-hq`, extracted so Micasa Asia
 has a deployment of its own without the five other divisions that repository
 carries — MDNA, MEC, Micana, Factory and Nasdaq.
+
+**Two addresses onto one set of data.** `mcn-asset-hq` is the internal
+dashboard: staff sign in there and get the agent screens — the portfolio, the
+records behind it, expenses, meters — plus user administration. This repository
+is the external one, and publishes two personas and no others. Nothing is
+duplicated or synced between them; they are two front doors to the same
+Postgres.
+
+A tenant may still sign in to the internal address, and will land on their own
+page there: it is the *purpose* of each deployment that differs, not the
+permissions. Staff who sign in here get a notice pointing them at the internal
+dashboard, because the screens they want are not published at this URL. Set
+`NEXT_PUBLIC_INTERNAL_DASHBOARD_URL` and that notice carries a link.
+
+This is not a security boundary and is not offered as one. Row level security
+decides what every account can read and answers the same on both addresses. The
+point is narrower and still worth having: the public address has no management
+surface on it to find.
 
 **The two share one Supabase database, and the schema belongs to mcn-asset-hq.**
 That is why this repository has no `supabase/` directory: no migrations, no
@@ -22,23 +39,29 @@ What that means in practice:
 - Row level security is the boundary between what each person sees, exactly as
   it is in the group dashboard. Nothing here re-implements it.
 - A user's profile — their role, their business line, whether they may issue
-  invoices — is one row in one `profiles` table. Granting access in this app's
-  admin screen grants it in the group dashboard too, and the reverse.
+  invoices — is one row in one `profiles` table. It is edited on the internal
+  dashboard, which is the only place the admin screen is published, and the
+  change is live here immediately.
 
 ## What was kept, and what was not
 
-Kept: the TMS pages, the forms behind them, the payment gateway, the shared
-shell (sign-in, account, user administration) and the parts of `lib/` those
-depend on.
+Kept: the tenant's page, the landlord's page, the two payment screens, the
+payment gateway behind them, the shared shell (sign-in, account) and the parts
+of `lib/` those depend on.
 
-Dropped: every other division's routes, views, panels, forms, types, constants,
-metrics and drilldowns; the invoice generator; the reminder cron and the aircon
-ingest, both of which belong to divisions that are not here.
+Dropped: every other division, of course — but also, since this became the
+external address, everything built for an agent. The four management screens
+and user administration are gone, with the eleven record forms, the filter bar,
+the room sheet, the verification queue, the drilldowns, the tenancy agreement
+PDF and the eighteen server actions that wrote records. Also the reminder cron
+and the aircon ingest, which belong to divisions that are not here.
 
-One piece moved rather than left behind. `ringgitInWords` started life in the
-invoice generator, which this repository does not carry, and the tenancy
-agreement needs it for the same reason an invoice does — a figure that governs
-a contract is written in numerals and in words. It now lives in `lib/words.ts`.
+Removing the actions matters more than it looks. Next.js strips an unused
+Server Function at build time so it never gets a public endpoint — `next build`
+would have done that on its own. But a reader who finds `saveUserAccess` in the
+tenant app has to work out for themselves that it is unreachable, and the next
+person to import something innocently is the one who publishes it. They are
+better gone than merely unused.
 
 ## Running it
 

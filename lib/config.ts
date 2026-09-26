@@ -24,3 +24,15 @@ export const CFG_PAY_TO_NAME = text(process.env.NEXT_PUBLIC_PAY_TO_NAME);
 export const CFG_PAY_BANK = text(process.env.NEXT_PUBLIC_PAY_BANK);
 export const CFG_PAY_ACCOUNT = text(process.env.NEXT_PUBLIC_PAY_ACCOUNT);
 export const CFG_PAY_CONTACT = text(process.env.NEXT_PUBLIC_PAY_CONTACT);
+
+/**
+ * Where staff are sent when they sign in to this tenant-facing deployment.
+ *
+ * Optional. Set it and StaffElsewhere offers a link; leave it unset and the
+ * notice still explains where the management screens are, without one. It is
+ * a URL rather than a hardcoded host so that moving the internal dashboard to
+ * a custom domain does not mean editing a component.
+ */
+export const CFG_INTERNAL_DASHBOARD_URL = text(
+  process.env.NEXT_PUBLIC_INTERNAL_DASHBOARD_URL,
+);

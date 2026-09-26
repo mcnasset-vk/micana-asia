@@ -5,13 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { useDashboard } from "@/components/providers/DashboardProvider";
-import {
-  IconDashboard,
-  IconReceipt,
-  IconBolt,
-  IconShield,
-  IconUsers,
-} from "@/components/ui/icons";
+import { IconDashboard, IconReceipt, IconBolt } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import type { ModuleKey } from "@/lib/types";
 
@@ -25,54 +19,29 @@ type NavItem = {
   icon: (props: { className?: string }) => ReactNode;
   /** null = visible to everyone; a module = CIOs of that module only. */
   module: ModuleKey | null;
-  /** Shown only to the super admin, whatever `module` says. */
-  superAdminOnly?: boolean;
 };
 
 /**
- * TMS is a fourth division. Unlike the others it has four pages rather than
- * one, because the work splits four ways: the agent's daily view, the records
- * behind it, what the portfolio costs, and the meters.
+ * What a tenant gets: their dashboard, and the two things they come here to
+ * do.
  *
- * They are listed as separate nav entries rather than tabs inside one page so
- * a link to the expenses screen is a link to the expenses screen.
+ * Listed as separate entries rather than tabs inside one page, so a link to
+ * the rent screen is a link to the rent screen.
+ *
+ * There is no agent list beside this one any more — the agent screens are not
+ * published at this address — so this no longer has to be described as what a
+ * tenant gets "instead".
  */
-const TMS_LINES: NavItem[] = [
+const TMS_LANDLORD_LINES: NavItem[] = [
   {
     href: "/tms",
-    label: "Agent Dashboard",
-    short: "Agent",
+    label: "Your Properties",
+    short: "Property",
     icon: IconDashboard,
-    module: "tms",
-  },
-  {
-    href: "/tms/tenants",
-    label: "Tenant Management",
-    short: "Tenants",
-    icon: IconUsers,
-    module: "tms",
-  },
-  {
-    href: "/tms/expenses",
-    label: "Expenses",
-    short: "Expenses",
-    icon: IconReceipt,
-    module: "tms",
-  },
-  {
-    href: "/tms/monitors",
-    label: "Monitors",
-    short: "Monitors",
-    icon: IconBolt,
     module: "tms",
   },
 ];
 
-/**
- * What a TMS tenant gets instead. Their dashboard, and the two things they
- * come here to do — neither of which appears on the agent's list above,
- * because an agent never pays their own rent.
- */
 const TMS_TENANT_LINES: NavItem[] = [
   {
     href: "/tms",
@@ -97,54 +66,34 @@ const TMS_TENANT_LINES: NavItem[] = [
   },
 ];
 
-/** Super admin only — granting access is not a business line. */
-const ADMIN: NavItem = {
-  href: "/admin/users",
-  label: "User Access",
-  short: "Users",
-  icon: IconShield,
-  module: null,
-  superAdminOnly: true,
-};
-
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { profile, isSuperAdmin, canView } = useDashboard();
+  const { profile, canView } = useDashboard();
 
   const visible = (item: NavItem) =>
     item.module === null || canView(item.module);
 
-  // The division summary spans all four MDNA lines, so it is offered to the
-  // super admin and to MDNA Admin — the two roles that can actually see them.
-
-  // Mirrors HomeView: it hands ExecutiveView to the super admin, and to the
-  // `pending` fallback. Every other role it routes to a module of its own.
-  // Three different lists rather than one filtered three ways. A tenant's nav
-  // is not the agent's with entries removed — it has two links the agent's
-  // does not, and calling the first one "Agent Dashboard" would name the page
-  // TmsModule diverts them away from.
+  // Mirrors TmsModule, which makes the same decision from the same two
+  // fields. If these two ever disagree, the nav is the one that is wrong: the
+  // module decides what renders.
   const isTmsTenant =
     profile.role === "tms" && profile.businessLine === "tms_tenant";
   const isTmsLandlord =
     profile.role === "tms" && profile.businessLine === "tms_landlord";
 
+  // Staff get no links at all: TmsModule shows them the notice, and a nav
+  // full of entries that all lead back to it would be worse than an empty
+  // one. Two lists rather than one filtered two ways — a landlord's nav is
+  // not the tenant's with entries removed, because a landlord does not pay
+  // the rent.
   const tmsLines = isTmsTenant
     ? TMS_TENANT_LINES.filter(visible)
     : isTmsLandlord
-      ? TMS_LINES.filter(visible)
-          .filter((item) => item.href === "/tms")
-          .map((item) => ({
-            ...item,
-            label: "Your Properties",
-            short: "Property",
-          }))
-      : TMS_LINES.filter(visible);
+      ? TMS_LANDLORD_LINES.filter(visible)
+      : [];
 
   // Mobile has no room for a nested tree, so it shows the leaves.
-  const mobileItems = [
-    ...tmsLines,
-    ...(isSuperAdmin ? [ADMIN] : []),
-  ];
+  const mobileItems = tmsLines;
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
@@ -152,10 +101,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-surface lg:flex">
         <div className="border-b border-line px-5 py-5">
           <p className="font-display text-lg font-semibold leading-tight tracking-tight text-ink">
-            MCN Asset HQ
+            Micasa Asia
           </p>
           <p className="mt-0.5 text-[0.6875rem] uppercase tracking-[0.09em] text-ink-subtle">
-            Capital &amp; Pipeline
+            Rooms &amp; Tenancies
           </p>
         </div>
 
@@ -163,26 +112,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="scrollbar-slim flex-1 space-y-1 overflow-y-auto p-3"
           aria-label="Main"
         >
-          {tmsLines.length > 0 ? (
-            <div className="pt-3">
-              {/* A heading rather than a link: the pages below are peers, and
-                  none of them is a summary of the rest. */}
-              <p className="px-3 py-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.09em] text-ink-subtle">
-                TMS
-              </p>
-              <div className="mt-1 space-y-1 border-l border-line pl-2">
-                {tmsLines.map((item) => (
-                  <NavLink key={item.href} item={item} pathname={pathname} />
-                ))}
-              </div>
-            </div>
-          ) : null}
+          {/* No section heading: there is one section, and "TMS" is a name
+              for the software rather than for anything a tenant came to do. */}
+          {tmsLines.map((item) => (
+            <NavLink key={item.href} item={item} pathname={pathname} />
+          ))}
 
-          {isSuperAdmin ? (
-            <div className="mt-3 space-y-1 border-t border-line pt-3">
-              <NavLink item={ADMIN} pathname={pathname} />
-            </div>
-          ) : null}
         </nav>
 
         <div className="border-t border-line px-5 py-4">
@@ -191,11 +126,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             {profile.email}
           </p>
           <p className="mt-1.5 text-[0.6875rem] text-ink-subtle">
-            {isSuperAdmin
-              ? "Full access to all modules"
-              : profile.role === "mdna"
-                ? "MDNA division — four business lines"
-                : "Scoped to one module"}
+            {isTmsTenant
+              ? "Your tenancy"
+              : isTmsLandlord
+                ? "Your properties"
+                : "Staff — management screens are on the internal dashboard"}
           </p>
         </div>
       </aside>
@@ -206,7 +141,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
             <div className="min-w-0 lg:hidden">
               <p className="truncate font-display text-base font-semibold tracking-tight text-ink">
-                MCN Asset HQ
+                Micasa Asia
               </p>
             </div>
             <p className="hidden text-xs text-ink-muted lg:block">Signed in</p>
