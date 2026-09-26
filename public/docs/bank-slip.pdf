@@ -1,0 +1,51 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 1186 >>
+stream
+BT /F1 16 Tf 0 0 0 rg 64 762 Td (MCN ASSET SDN BHD) Tj ET
+BT /F2 8.5 Tf 0.45 0.45 0.45 rg 64 749.5 Td (Registration No. 202401xxxxxx \(1xxxxxx-A\)) Tj ET
+BT /F2 8.5 Tf 0.45 0.45 0.45 rg 64 737 Td (Kuala Lumpur, Malaysia) Tj ET
+0.72 0.75 0.80 RG 0.7 w 64 724 m 531 724 l S
+BT /F1 13 Tf 0 0 0 rg 64 685 Td (REMITTANCE ADVICE) Tj ET
+BT /F2 10 Tf 0 0 0 rg 64 663 Td (Transaction Reference: MCN/2026/TT/00418) Tj ET
+BT /F2 10 Tf 0 0 0 rg 64 643 Td (Value Date: 3 June 2026) Tj ET
+BT /F2 10 Tf 0 0 0 rg 64 623 Td (Beneficiary: MCN ASSET SDN BHD) Tj ET
+BT /F2 10 Tf 0 0 0 rg 64 603 Td (Beneficiary Account: xxxx-xxxx-4471) Tj ET
+BT /F1 12 Tf 0 0 0 rg 64 577 Td (Amount: RM1,000,000.00) Tj ET
+BT /F1 10 Tf 0 0 0 rg 64 555 Td (Status: SUCCESSFUL) Tj ET
+0.72 0.75 0.80 RG 0.7 w 64 536 m 531 536 l S
+BT /F2 9 Tf 0.4 0.4 0.4 rg 64 509 Td (This advice is computer generated and does not require a signature.) Tj ET
+0.72 0.75 0.80 RG 0.7 w 64 476 m 531 476 l S
+BT /F2 8 Tf 0.5 0.5 0.5 rg 64 454 Td (SAMPLE DOCUMENT - placeholder generated for the MCN Asset HQ dashboard prototype.) Tj ET
+BT /F2 8 Tf 0.5 0.5 0.5 rg 64 442 Td (Not a real instrument. Replace with the signed original before use.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000353 00000 n 
+0000000450 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+1688
+%%EOF

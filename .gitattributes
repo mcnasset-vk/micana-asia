@@ -1,0 +1,21 @@
+# Normalise source to LF in the repository, whatever the checkout platform.
+* text=auto eol=lf
+
+# Binary files must never get line-ending conversion.
+#
+# The sample PDFs in public/docs are generated with uncompressed content
+# streams, so git's heuristic reads them as text. Converting LF to CRLF would
+# shift every byte offset in the xref table and the documents would stop
+# rendering — mark them explicitly.
+*.pdf   binary
+*.ico   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.woff  binary
+*.woff2 binary
+
+# Generated — collapse in diffs and exclude from language stats.
+package-lock.json linguist-generated=true -diff

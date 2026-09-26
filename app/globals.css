@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+/* Class-based dark mode, driven by next-themes (attribute="class"). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   MCN Asset HQ — corporate palette.
+   Light: paper-white surfaces on a cool slate canvas.
+   Dark:  deep navy canvas, designed rather than inverted.
+   Semantic money colours are shared by charts, badges and progress bars so a
+   colour always means the same thing anywhere on the dashboard.
+--------------------------------------------------------------------------- */
+:root {
+  --app: #eef2f7;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #f1f5f9;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+
+  --ink: #0f172a;
+  --ink-muted: #526480;
+  /* Eyebrows and detail lines use this, so it has to clear 4.5:1 on every
+     surface tone — not just on pure white. */
+  --ink-subtle: #5a687e;
+  --ink-invert: #ffffff;
+
+  --accent: #a16207;
+  --accent-hover: #854d0e;
+  --accent-soft: #fdf5e1;
+  --accent-line: #e6d5a5;
+
+  --received: #15803d;
+  --received-soft: #dcfce7;
+  --received-line: #a7e3bd;
+
+  --committed: #1d4ed8;
+  --committed-soft: #dbeafe;
+  --committed-line: #b0cbf7;
+
+  --risk: #a04a06;
+  --risk-soft: #fdf0dd;
+  --risk-line: #f2d2a4;
+
+  --stalled: #b91c1c;
+  --stalled-soft: #fee2e2;
+  --stalled-line: #f6bcbc;
+
+  --idle: #4a5a73;
+  --idle-soft: #eef2f7;
+  --idle-line: #d7dfea;
+
+  /* Label colour for text sitting ON a saturated bar fill. Light-mode fills
+     are dark, so white reads; the dark theme flips this below. */
+  --on-bar: #ffffff;
+
+  --ring: #a16207;
+}
+
+.dark {
+  --app: #070c16;
+  --surface: #101827;
+  --surface-2: #151f31;
+  --surface-3: #1b2739;
+  --line: #23304a;
+  --line-strong: #33425f;
+
+  --ink: #eef3fb;
+  --ink-muted: #9fb0c9;
+  --ink-subtle: #8b9cb4;
+  --ink-invert: #070c16;
+
+  --accent: #e3b23c;
+  --accent-hover: #f0c761;
+  --accent-soft: #2a2210;
+  --accent-line: #4d3f1c;
+
+  --received: #4ade80;
+  --received-soft: #0d2a1a;
+  --received-line: #1c4d31;
+
+  --committed: #7aa9f7;
+  --committed-soft: #0f1f3d;
+  --committed-line: #1f3a68;
+
+  --risk: #fbbf24;
+  --risk-soft: #2b2008;
+  --risk-line: #4d3a10;
+
+  --stalled: #f87171;
+  --stalled-soft: #2d1214;
+  --stalled-line: #59232a;
+
+  --idle: #8496b0;
+  --idle-soft: #172133;
+  --idle-line: #2a3752;
+
+  /* Dark-theme fills are light, so bar labels must be dark to stay legible. */
+  --on-bar: #070c16;
+
+  --ring: #e3b23c;
+}
+
+@theme inline {
+  --color-app: var(--app);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-invert: var(--ink-invert);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+
+  --color-received: var(--received);
+  --color-received-soft: var(--received-soft);
+  --color-received-line: var(--received-line);
+
+  --color-committed: var(--committed);
+  --color-committed-soft: var(--committed-soft);
+  --color-committed-line: var(--committed-line);
+
+  --color-risk: var(--risk);
+  --color-risk-soft: var(--risk-soft);
+  --color-risk-line: var(--risk-line);
+
+  --color-stalled: var(--stalled);
+  --color-stalled-soft: var(--stalled-soft);
+  --color-stalled-line: var(--stalled-line);
+
+  --color-idle: var(--idle);
+  --color-idle-soft: var(--idle-soft);
+  --color-idle-line: var(--idle-line);
+
+  --color-on-bar: var(--on-bar);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-source-serif), Georgia, "Times New Roman", serif;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--line);
+  }
+
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--app);
+    color: var(--ink);
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Almost every figure here is money or a count — keep the columns aligned. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer utilities {
+  /* Diagonal hatch marks the "committed but not yet banked" band. */
+  .hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      currentColor 0 2px,
+      transparent 2px 7px
+    );
+  }
+
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background-color: var(--line-strong);
+    border-radius: 999px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@keyframes mcn-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes mcn-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes mcn-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: mcn-slide-in 0.24s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.animate-slide-up {
+  animation: mcn-slide-up 0.24s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.animate-fade-in {
+  animation: mcn-fade-in 0.18s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in,
+  .animate-slide-up,
+  .animate-fade-in {
+    animation: none;
+  }
+}
