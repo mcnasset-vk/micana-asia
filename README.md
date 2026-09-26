@@ -65,3 +65,17 @@ so the app is safe to deploy before the merchant account is ready.
 `PAYEX_PAID_STATUSES` must be set before any payment can settle, and must hold
 a value that has been observed rather than guessed. A wrong entry marks rent
 paid for money that never arrived, and nothing downstream contradicts it.
+
+What a tenant can do without asking anybody: sign in, see what they owe on
+**Your Tenancy**, pay a month's rent on **Room Rental**, and buy meter credit
+on **Smartmeter Topup**. Each of the two payment screens offers the gateway and
+bank transfer side by side, with the instructions for both spelled out; a bank
+transfer still waits on someone verifying the slip, while a gateway payment
+settles itself.
+
+The gateway is told where to send the tenant back, and where to call back,
+from the host the request arrived on rather than from configuration. So this
+deployment returns to this deployment, and a preview returns to itself —
+nothing to set per environment, and no way for one deployment to hijack
+another's return. Both apps may point at the same Payex account: an attempt is
+matched by the reference stored against it in the database, not by origin.
