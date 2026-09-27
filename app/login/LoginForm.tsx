@@ -7,6 +7,12 @@ import { IconLock } from "@/components/ui/icons";
 
 import { signIn, type LoginState } from "./actions";
 
+/**
+ * Colours are written out rather than taken from the theme tokens, for the
+ * reason given on the page this form sits on: the sign-in screen is light
+ * whatever the device prefers. Tokens here would render a dark form inside a
+ * light card on a phone set to dark.
+ */
 export function LoginForm({ next, notice }: { next: string; notice?: string }) {
   const [state, formAction] = useActionState<LoginState, FormData>(signIn, {});
 
@@ -15,42 +21,36 @@ export function LoginForm({ next, notice }: { next: string; notice?: string }) {
       <input type="hidden" name="next" value={next} />
 
       {notice ? (
-        <p className="rounded-lg border border-risk-line bg-risk-soft px-3 py-2.5 text-xs text-risk">
+        <p className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-xs leading-relaxed text-amber-900">
           {notice}
         </p>
       ) : null}
 
-      <label className="block">
-        <span className="mb-1.5 block text-xs font-medium text-ink-muted">
-          Email address
-        </span>
+      <Field label="Email address">
         <input
           name="email"
           type="email"
           autoComplete="username"
           required
           placeholder="you@example.com"
-          className="w-full rounded-lg border border-line bg-surface-2 px-3 py-2.5 text-sm text-ink placeholder:text-ink-subtle focus:border-accent focus:outline-none"
+          className={INPUT}
         />
-      </label>
+      </Field>
 
-      <label className="block">
-        <span className="mb-1.5 block text-xs font-medium text-ink-muted">
-          Password
-        </span>
+      <Field label="Password">
         <input
           name="password"
           type="password"
           autoComplete="current-password"
           required
-          className="w-full rounded-lg border border-line bg-surface-2 px-3 py-2.5 text-sm text-ink focus:border-accent focus:outline-none"
+          className={INPUT}
         />
-      </label>
+      </Field>
 
       {state.error ? (
         <p
           role="alert"
-          className="rounded-lg border border-stalled-line bg-stalled-soft px-3 py-2.5 text-xs text-stalled"
+          className="rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-xs text-rose-700"
         >
           {state.error}
         </p>
@@ -58,12 +58,36 @@ export function LoginForm({ next, notice }: { next: string; notice?: string }) {
 
       <SubmitButton />
 
-      <p className="flex items-start gap-2 pt-1 text-[0.6875rem] leading-relaxed text-ink-subtle">
-        <IconLock className="mt-0.5 size-3.5 shrink-0" />
-        Accounts are created by the super admin. Contact them if you cannot sign
-        in.
+      <p className="flex items-start gap-2 pt-1 text-[0.6875rem] leading-relaxed text-slate-500">
+        <IconLock className="mt-0.5 size-3.5 shrink-0 text-slate-400" />
+        <span>
+          Accounts are set up by the office. Give them a call if you cannot sign
+          in.
+        </span>
       </p>
     </form>
+  );
+}
+
+const INPUT =
+  "w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-900 " +
+  "placeholder:text-slate-400 transition focus:border-amber-400 focus:bg-white " +
+  "focus:outline-none focus:ring-4 focus:ring-amber-400/20";
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold text-slate-700">
+        {label}
+      </span>
+      {children}
+    </label>
   );
 }
 
@@ -73,7 +97,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white shadow-md shadow-amber-500/25 transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "Signing in…" : "Sign in"}
     </button>
