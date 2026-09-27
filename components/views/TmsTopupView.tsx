@@ -152,11 +152,15 @@ export function TmsTopupView({
         <Card className="mt-4 border-received-line bg-received-soft">
           <div className="px-5 py-4 text-sm">
             <p className="font-semibold text-received">Topup submitted.</p>
+            {/* See the note on the same card in TmsRoomRentalView: the
+                reference is issued on submit, after the transfer, so it cannot
+                be quoted on it. */}
             <p className="mt-1 text-ink">
-              Quote{" "}
-              <span className="font-mono font-semibold">{state.reference}</span>{" "}
-              on the transfer. Your balance goes up once the office has checked
-              the slip — not before, so leave enough on the meter to last.
+              Your reference is{" "}
+              <span className="font-mono font-semibold">{state.reference}</span>
+              . Keep it — quote it if you need to ask the office about this
+              top-up. Your balance goes up once the office has checked the slip,
+              not before, so leave enough on the meter to last.
             </p>
           </div>
         </Card>

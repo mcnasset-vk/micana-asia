@@ -11,6 +11,13 @@ import {
  * is the whole reason it is a component: two screens quoting two different
  * account numbers is a support problem waiting to happen.
  *
+ * The bank, the account number and the payee are one block at the top rather
+ * than three rows of a definition list, because they are read together and
+ * acted on together — a tenant copies the number into their banking app and
+ * then checks the name their app shows back against the one here. Getting that
+ * comparison wrong is the expensive mistake, so the name is labelled "Pay to"
+ * and sits directly under the number it belongs to.
+ *
  * The figures come from the environment like every other commercial value in
  * this codebase — see the docstring on lib/config.ts. They are NEXT_PUBLIC_,
  * so they reach the browser bundle, which is the right trade for an account
@@ -25,33 +32,49 @@ export function BankDetails({ reference }: { reference?: string }) {
   return (
     <Card>
       <CardHeader
-        title="Bank in details"
-        hint="Transfer the total, then attach the slip beside this"
+        title="Transfer to this account"
+        hint="Check the name matches before you send anything"
       />
       <div className="px-5 py-4 text-sm">
         {configured ? (
-          <dl className="space-y-3">
-            {CFG_PAY_BANK ? <Line term="Bank name" value={CFG_PAY_BANK} /> : null}
+          <>
+            {/* The number a tenant is about to type into their banking app,
+                set out to be read and checked rather than skimmed: bank and
+                account together, big, before anything else on the card. */}
             {CFG_PAY_ACCOUNT ? (
-              <Line term="Bank account" value={CFG_PAY_ACCOUNT} mono />
+              <div className="mb-4 rounded-lg border border-line bg-surface-3 px-4 py-3">
+                {CFG_PAY_BANK ? (
+                  <p className="text-[0.6875rem] font-medium uppercase tracking-[0.09em] text-ink-subtle">
+                    {CFG_PAY_BANK}
+                  </p>
+                ) : null}
+                <p className="mt-0.5 font-mono text-lg font-semibold tracking-wide text-ink">
+                  {CFG_PAY_ACCOUNT}
+                </p>
+                {CFG_PAY_TO_NAME ? (
+                  <p className="mt-1 text-ink">
+                    <span className="text-ink-muted">Pay to</span>{" "}
+                    <span className="font-semibold">{CFG_PAY_TO_NAME}</span>
+                  </p>
+                ) : null}
+              </div>
             ) : null}
-            {CFG_PAY_TO_NAME ? (
-              <Line term="Company name" value={CFG_PAY_TO_NAME} />
+          <dl className="space-y-3">
+            {CFG_PAY_ACCOUNT ? null : CFG_PAY_BANK ? (
+              <Line term="Bank name" value={CFG_PAY_BANK} />
+            ) : null}
+            {CFG_PAY_ACCOUNT ? null : CFG_PAY_TO_NAME ? (
+              <Line term="Account name" value={CFG_PAY_TO_NAME} />
             ) : null}
             {reference ? <Line term="Reference" value={reference} mono /> : null}
           </dl>
+          </>
         ) : (
           <p className="max-w-prose text-ink-muted">
             Payment details have not been published yet. Contact the office for
             where to send this.
           </p>
         )}
-
-        <p className="mt-4 max-w-prose text-xs leading-relaxed text-ink-subtle">
-          If you pay by bank transfer, take a screenshot of the payslip and
-          attach it as the payment slip. Keep it until the amount shows as
-          confirmed.
-        </p>
 
         {CFG_PAY_CONTACT ? (
           <p className="mt-3 text-xs text-ink-subtle">

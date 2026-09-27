@@ -196,11 +196,16 @@ export function TmsRoomRentalView({
         <Card className="mt-4 border-received-line bg-received-soft">
           <div className="px-5 py-4 text-sm">
             <p className="font-semibold text-received">Payment submitted.</p>
+            {/* Not "quote this on the transfer": the slip field is required,
+                so the money has already moved by the time this reference
+                exists. It identifies the submission, and that is what it is
+                good for. */}
             <p className="mt-1 text-ink">
-              Quote{" "}
-              <span className="font-mono font-semibold">{state.reference}</span>{" "}
-              on the transfer. The office will confirm it once the slip has been
-              checked — the months stay listed as awaiting confirmation until
+              Your reference is{" "}
+              <span className="font-mono font-semibold">{state.reference}</span>
+              . Keep it — quote it if you need to ask the office about this
+              payment. The office will confirm it once the slip has been
+              checked; the months stay listed as awaiting confirmation until
               then.
             </p>
           </div>
