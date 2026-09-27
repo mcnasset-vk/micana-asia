@@ -101,7 +101,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-surface lg:flex">
         <div className="border-b border-line px-5 py-5">
           <p className="font-display text-lg font-semibold leading-tight tracking-tight text-ink">
-            Micasa Asia
+            Micana Asia
           </p>
           <p className="mt-0.5 text-[0.6875rem] uppercase tracking-[0.09em] text-ink-subtle">
             Rooms &amp; Tenancies
@@ -141,7 +141,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
             <div className="min-w-0 lg:hidden">
               <p className="truncate font-display text-base font-semibold tracking-tight text-ink">
-                Micasa Asia
+                Micana Asia
               </p>
             </div>
             <p className="hidden text-xs text-ink-muted lg:block">Signed in</p>

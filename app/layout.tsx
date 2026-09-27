@@ -19,9 +19,9 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Micasa Asia — Tenant Management",
+  title: "Micana Asia — Tenant Management",
   description:
-    "Rooms, tenancies, rent and prepaid meters for Micasa Asia."
+    "Rooms, tenancies, rent and prepaid meters for Micana Asia."
 };
 
 export const viewport: Viewport = {

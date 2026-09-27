@@ -1,11 +1,11 @@
-# Micasa Asia — Tenant Management
+# Micana Asia — Tenant Management
 
-The tenant-facing address for Micasa Asia. A tenant sees what they owe and
+The tenant-facing address for Micana Asia. A tenant sees what they owe and
 pays it; a landlord sees their own units. That is the whole of it.
 
 ## Its relationship to mcn-asset-hq
 
-This is the TMS module of `mcnasset-vk/mcn-asset-hq`, extracted so Micasa Asia
+This is the TMS module of `mcnasset-vk/mcn-asset-hq`, extracted so Micana Asia
 has a deployment of its own without the five other divisions that repository
 carries — MDNA, MEC, Micana, Factory and Nasdaq.
 
