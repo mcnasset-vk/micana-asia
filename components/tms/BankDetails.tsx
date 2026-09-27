@@ -3,7 +3,10 @@ import {
   CFG_PAY_ACCOUNT,
   CFG_PAY_BANK,
   CFG_PAY_CONTACT,
+  CFG_PAY_EMAIL,
+  CFG_PAY_PHONE,
   CFG_PAY_TO_NAME,
+  telHref,
 } from "@/lib/config";
 
 /**
@@ -76,7 +79,27 @@ export function BankDetails({ reference }: { reference?: string }) {
           </p>
         )}
 
-        {CFG_PAY_CONTACT ? (
+        {CFG_PAY_PHONE || CFG_PAY_EMAIL ? (
+          <p className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs text-ink-subtle">
+            <span>Questions:</span>
+            {CFG_PAY_PHONE ? (
+              <a
+                href={telHref(CFG_PAY_PHONE)}
+                className="font-medium text-ink underline decoration-line underline-offset-2 hover:decoration-ink"
+              >
+                {CFG_PAY_PHONE}
+              </a>
+            ) : null}
+            {CFG_PAY_EMAIL ? (
+              <a
+                href={`mailto:${CFG_PAY_EMAIL}`}
+                className="font-medium text-ink underline decoration-line underline-offset-2 hover:decoration-ink"
+              >
+                {CFG_PAY_EMAIL}
+              </a>
+            ) : null}
+          </p>
+        ) : CFG_PAY_CONTACT ? (
           <p className="mt-3 text-xs text-ink-subtle">
             Questions: {CFG_PAY_CONTACT}
           </p>
