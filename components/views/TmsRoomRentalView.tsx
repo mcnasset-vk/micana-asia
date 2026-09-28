@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { Fragment, useActionState, useEffect, useMemo, useState } from "react";
 
 import {
   startTmsGatewayPayment,
@@ -98,9 +98,22 @@ export function TmsRoomRentalView({
     }
 
     // Oldest first. The month you owe for longest is the one to settle first,
-    // and it should not be at the bottom of the list.
-    return [...byMonth.values()].sort((a, b) => a.month.localeCompare(b.month));
-  }, [data.charges]);
+    // and it should not be at the bottom of the list. Months not yet due sort
+    // to the end by the same rule, which is where they belong: what is owed
+    // now comes before what a tenant may choose to pay early.
+    return [...byMonth.values()]
+      .map((entry) => {
+        const due = entry.charges.map((c) => c.dueAt).sort()[0];
+        return { ...entry, due, upcoming: Boolean(due) && due > now };
+      })
+      .sort((a, b) => a.month.localeCompare(b.month));
+  }, [data.charges, now]);
+
+  // What is actually owed today, which is not the same as what is listed.
+  // A month raised in advance is payable but not outstanding, and counting it
+  // as a debt would tell a tenant who is up to date that they are behind.
+  const dueNow = months.filter((m) => !m.upcoming);
+  const upcoming = months.filter((m) => m.upcoming);
 
   const [picked, setPicked] = useState<string[]>([]);
 
@@ -278,7 +291,11 @@ export function TmsRoomRentalView({
             hint={
               months.length === 0
                 ? "Nothing outstanding — you are up to date"
-                : "Tick the months you are paying for"
+                : dueNow.length === 0
+                  ? "Nothing due — the months below are open early if you want to pay ahead"
+                  : upcoming.length > 0
+                    ? "Tick the months you are paying for. The later ones are not due yet — pay them early if you like"
+                    : "Tick the months you are paying for"
             }
           />
 
@@ -301,17 +318,30 @@ export function TmsRoomRentalView({
                   </tr>
                 </thead>
                 <tbody className="tabular-nums">
-                  {months.map((month) => {
+                  {months.map((month, index) => {
                     const monthTotal = month.rent + month.parking + month.other;
                     const late = month.charges.some((c) =>
                       isChargeOverdue(c, now),
                     );
-                    const due = month.charges
-                      .map((c) => c.dueAt)
-                      .sort()[0];
+                    const due = month.due;
+                    // A heading rather than a second table: the columns are the
+                    // same and the sums add up across both, so splitting them
+                    // apart would only make the total harder to follow.
+                    const startsAdvance =
+                      month.upcoming && !months[index - 1]?.upcoming;
                     return (
+                      <Fragment key={month.month}>
+                        {startsAdvance ? (
+                          <tr className="border-b border-line bg-surface-2">
+                            <td
+                              colSpan={7}
+                              className="px-5 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-subtle"
+                            >
+                              Pay in advance — not due yet
+                            </td>
+                          </tr>
+                        ) : null}
                       <tr
-                        key={month.month}
                         className="border-b border-line last:border-0"
                       >
                         <td className="px-5 py-2.5">
@@ -347,6 +377,10 @@ export function TmsRoomRentalView({
                         <td className="whitespace-nowrap px-5 py-2.5">
                           {late ? (
                             <Badge tone="stalled">Overdue</Badge>
+                          ) : month.upcoming ? (
+                            <span className="whitespace-nowrap text-ink-subtle">
+                              {formatDate(due)} · early
+                            </span>
                           ) : (
                             <span className="text-ink-muted">
                               {formatDate(due)}
@@ -354,6 +388,7 @@ export function TmsRoomRentalView({
                           )}
                         </td>
                       </tr>
+                      </Fragment>
                     );
                   })}
                 </tbody>
