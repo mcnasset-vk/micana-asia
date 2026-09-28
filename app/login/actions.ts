@@ -64,7 +64,7 @@ export interface CodeState {
 }
 
 /**
- * Step one: ask Supabase to email a six-digit code.
+ * Step one: ask Supabase to email a one-time code.
  *
  * `shouldCreateUser: false` is the important line. Without it, typing any
  * address at all creates an account for it, and the sign-in page becomes a
@@ -114,8 +114,18 @@ export async function verifyCode(
   const token = String(formData.get("code") ?? "").replace(/\D/g, "");
 
   if (!address) return { error: "Start again and enter your email address." };
-  if (token.length !== 6) {
-    return { sent: true, email: address, error: "Enter the six digits from the email." };
+
+  // Not a fixed six. How long the code is comes from a Supabase setting
+  // (Auth → Providers → Email), this project issues eight, and an app that
+  // insists on six makes the real code impossible to type. Anything of a
+  // plausible length is passed through and the server decides whether it is
+  // right — which is where that judgement belongs anyway.
+  if (token.length < 4 || token.length > 12) {
+    return {
+      sent: true,
+      email: address,
+      error: "Enter the code from the email — digits only.",
+    };
   }
 
   const supabase = await createClient();

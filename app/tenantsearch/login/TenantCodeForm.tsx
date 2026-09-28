@@ -14,7 +14,7 @@ import {
 import { requestCode, verifyCode, type CodeState } from "@/app/login/actions";
 
 /**
- * Email, then a six-digit code. No password anywhere on this screen.
+ * Email, then a one-time code. No password anywhere on this screen.
  *
  * Not the email alone, which is what makes it safe to hand this link out. An
  * address is not a secret — it is on the tenancy agreement and in the
@@ -60,7 +60,7 @@ export function TenantCodeForm({ next }: { next: string }) {
         <Submit idle="Email me a code" busy="Sending…" />
 
         <Footnote>
-          We send a six-digit code to your email. There is no password to
+          We send a one-time code to your email. There is no password to
           remember.
         </Footnote>
       </form>
@@ -77,17 +77,21 @@ export function TenantCodeForm({ next }: { next: string }) {
         way. It is good for one hour.
       </Notice>
 
-      <Field label="Six-digit code">
+      {/* No fixed length. How many digits Supabase sends is a project setting
+          and this one sends eight, so a box capped at six would truncate the
+          real code as it was typed — the most confusing failure available,
+          because the tenant watches the last digits vanish. */}
+      <Field label="Code from your email">
         <input
           name="code"
           type="text"
           inputMode="numeric"
           autoComplete="one-time-code"
-          maxLength={6}
+          maxLength={12}
           required
           autoFocus
-          placeholder="000000"
-          className={`${INPUT} text-center font-mono text-lg tracking-[0.4em]`}
+          placeholder="••••••"
+          className={`${INPUT} text-center font-mono text-lg tracking-[0.35em]`}
         />
       </Field>
 
