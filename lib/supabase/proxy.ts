@@ -13,11 +13,18 @@ import { NextResponse, type NextRequest } from "next/server";
  */
 const PUBLIC_PATHS = [
   "/login",
+  // The tenant's own door. Without this line the proxy would redirect it to
+  // /login before it rendered, which is exactly the password box the separate
+  // route exists to keep out of a tenant's way.
+  "/tenantsearch/login",
   "/auth",
   "/api/iot",
   "/api/cron",
   "/api/webhooks",
 ];
+
+/** Both sign-in screens, for the "already signed in, go home" check below. */
+const SIGN_IN_PATHS = ["/login", "/tenantsearch/login"];
 
 /**
  * Refreshes the Supabase auth token on every request and redirects signed-out
@@ -64,7 +71,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (data?.claims && pathname === "/login") {
+  if (data?.claims && SIGN_IN_PATHS.includes(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.search = "";
