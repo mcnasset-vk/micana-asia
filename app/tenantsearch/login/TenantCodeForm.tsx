@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 import {
   Field,
@@ -96,12 +96,20 @@ export function TenantCodeForm({ next }: { next: string }) {
       </Field>
 
       {checked.error ? <Problem>{checked.error}</Problem> : null}
+      {asked.error ? <Problem>{asked.error}</Problem> : null}
 
       <Submit idle="Sign in" busy="Checking…" />
 
+      {/* Same form, different action. The address is already in a hidden field
+          here, so resending needs nothing typed — and formNoValidate is what
+          stops the browser demanding the code box be filled before it will let
+          somebody ask for the code. */}
+      <Resend action={askAction} />
+
       <Footnote>
-        Nothing arrived? Check the address is right — we answer the same way
-        whether or not we have it — then ask again, or call the office.
+        Nothing arrived? Look in your spam folder, and check the address above
+        is right — we answer the same way whether or not we have it. If you ask
+        twice, use the code from the newest email.
       </Footnote>
 
       <a
@@ -111,5 +119,48 @@ export function TenantCodeForm({ next }: { next: string }) {
         Use a different email address
       </a>
     </form>
+  );
+}
+
+/**
+ * Ask for another code, without leaving the screen or retyping the address.
+ *
+ * Its own component so the wait starts itself: this mounts at the moment a
+ * code goes out, so the deadline is the initial state rather than something an
+ * effect has to set afterwards.
+ *
+ * There is a wait at all because Supabase rate limits OTP requests and answers
+ * the whole project with an error once the hourly ceiling is hit. A tenant
+ * pressing the button five times while the first email is still in flight
+ * would spend an allowance that everybody shares.
+ */
+const COOLDOWN_SECONDS = 30;
+
+function Resend({ action }: { action: (formData: FormData) => void }) {
+  // Seconds, counted down by the interval rather than worked out from the
+  // clock during render — reading Date.now() while rendering makes the
+  // component impure, and React is right to object.
+  const [left, setLeft] = useState(COOLDOWN_SECONDS);
+
+  useEffect(() => {
+    const id = setInterval(() => setLeft((n) => (n > 0 ? n - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <button
+      type="submit"
+      // Same form, a different action. The address is already in a hidden
+      // field, so this needs nothing typed — and formNoValidate is what stops
+      // the browser demanding the code box be filled before it will let
+      // somebody ask for the code.
+      formAction={action}
+      formNoValidate
+      disabled={left > 0}
+      onClick={() => setLeft(COOLDOWN_SECONDS)}
+      className="block w-full text-center text-xs font-medium text-amber-700 underline decoration-amber-300 underline-offset-2 transition hover:text-amber-800 disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline"
+    >
+      {left > 0 ? `Send another code in ${left}s` : "Send another code"}
+    </button>
   );
 }
