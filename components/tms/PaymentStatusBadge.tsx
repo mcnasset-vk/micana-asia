@@ -31,7 +31,13 @@ export function paymentStatusLabel(
     case "cancelled":
       return "Withdrawn";
     default:
-      return method === "gateway" ? "Awaiting payment" : "With the office";
+      // Every gateway status that is neither paid nor finished lands here —
+      // processing, in_progress, INIT, pending, submitted, retrying, and
+      // anything new Payex adds that nothing recognises yet. "In process" is
+      // the one thing true of all of them, and truer than "Awaiting payment",
+      // which read as though the tenant had not paid when often they had and
+      // the gateway simply had not said so yet.
+      return method === "gateway" ? "In process" : "With the office";
   }
 }
 
